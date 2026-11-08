@@ -1,0 +1,5 @@
+- insert:
+    - id: antigravity-rules
+      name: 'dsh-plugin-antigravity-rules'
+      config:
+        enabled: true

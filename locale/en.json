@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Google Antigravity rules",
+    "description": "Enables native Google Antigravity rules loading and enforcement from .agents/rules."
+  }
+}

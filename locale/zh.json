@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Google Antigravity 规则支持",
+    "description": "支持从 .agents/rules 加载与执行原生 Google Antigravity 规则。"
+  }
+}

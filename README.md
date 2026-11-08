@@ -6,6 +6,7 @@
 Native Google Antigravity engineering rules loader and runtime enforcement engine for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
 
 ---
+<img width="777" height="590" alt="image" src="https://github.com/user-attachments/assets/2c08aa99-8885-41b9-9005-c89e48e69069" />
 
 ## Overview & Antigravity Compatibility
 

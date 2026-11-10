@@ -1,6 +1,7 @@
 # dsh-plugin-antigravity-rules
 
 [![npm version](https://img.shields.io/npm/v/dsh-plugin-antigravity-rules.svg)](https://www.npmjs.com/package/dsh-plugin-antigravity-rules)
+[![DSH Plugin](https://img.shields.io/badge/DSH-Plugin-blue.svg)](https://github.com/deepseek-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Native Google Antigravity engineering rules loader and runtime enforcement engine for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).

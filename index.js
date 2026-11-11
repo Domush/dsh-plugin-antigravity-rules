@@ -26,7 +26,37 @@ try {
 
 export const Config = ConfigSchema;
 
-export const inject = ["systemPrompt", "tools", "workingDirectory", "agents", "webServer", "workspaceRegistry"];
+export const inject = ["systemPrompt", "tools", "workingDirectory", "agents", "webServer", "workspaceRegistry", "connection"];
+
+/** Validate whether a requested directory is an approved workspace */
+function getApprovedWorkspace(ctx, requestedCwd) {
+  const allowed = new Set();
+  try {
+    if (ctx.workspaceRegistry && typeof ctx.workspaceRegistry.list === "function") {
+      for (const ws of ctx.workspaceRegistry.list()) {
+        if (ws && ws.path) allowed.add(path.resolve(ws.path));
+      }
+    }
+  } catch {}
+  try {
+    if (ctx.workingDirectory) {
+      const cur = ctx.workingDirectory.get?.() || ctx.workingDirectory.current;
+      if (cur) allowed.add(path.resolve(cur));
+      if (ctx.workingDirectory.defaultDirectory) allowed.add(path.resolve(ctx.workingDirectory.defaultDirectory));
+    }
+  } catch {}
+  allowed.add(path.resolve(process.cwd()));
+
+  if (requestedCwd && typeof requestedCwd === "string") {
+    const resolved = path.resolve(requestedCwd);
+    if (allowed.has(resolved)) {
+      return resolved;
+    }
+  }
+
+  return Array.from(allowed)[0] || path.resolve(process.cwd());
+}
+
 
 /** Built-in heuristic domain glob mappings when frontmatter does not declare explicit globs */
 const DEFAULT_DOMAIN_GLOBS = {
@@ -611,10 +641,23 @@ export function apply(ctx, rawConfig) {
       path: "/api/antigravity-rules",
       handler: async (req, res) => {
         try {
+          if (ctx.connection && typeof ctx.connection.requestRejection === "function") {
+            const rejection = ctx.connection.requestRejection(req);
+            if (rejection !== void 0) {
+              sendJson(res, rejection, { ok: false, error: rejection === 401 ? "Unauthorized" : "Forbidden" });
+              return;
+            }
+          }
+
           const urlObj = new URL(String(req.url), "http://localhost");
-          const queryCwd = urlObj.searchParams.get("cwd");
-          const { rulesDir } = findActiveRulesDir(ctx, queryCwd, config.rulesDir);
-          const allRules = getAllRules(ctx, queryCwd, config.rulesDir);
+          const rawCwd = urlObj.searchParams.get("cwd");
+          if (rawCwd && getApprovedWorkspace(ctx, rawCwd) !== path.resolve(rawCwd)) {
+            sendJson(res, 400, { ok: false, error: "Invalid or unregistered workspace path" });
+            return;
+          }
+          const approvedCwd = getApprovedWorkspace(ctx, rawCwd);
+          const { rulesDir } = findActiveRulesDir(ctx, approvedCwd, config.rulesDir);
+          const allRules = getAllRules(ctx, approvedCwd, config.rulesDir);
           const settings = loadSettings(rulesDir);
           const disabledRules = new Set(settings.disabledRules || []);
 
@@ -631,6 +674,11 @@ export function apply(ctx, rawConfig) {
           }
 
           if (req.method === "POST") {
+            const contentType = req.headers["content-type"] || "";
+            if (!contentType.includes("application/json")) {
+              sendJson(res, 415, { ok: false, error: "Unsupported Media Type: expected application/json" });
+              return;
+            }
             const bodyText = await readBoundedBody(req);
             if (!bodyText) {
               sendJson(res, 400, { ok: false, error: "Empty or oversized request body" });

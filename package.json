@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-antigravity-rules",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Native Google Antigravity rules loader and runtime enforcement engine for DeepSeek Harness",
   "type": "module",
   "license": "MIT",
@@ -38,7 +38,8 @@
     "README.md",
     "LICENSE",
     "CHANGELOG.md",
-    "CONTRIBUTING.md"
+    "CONTRIBUTING.md",
+    "screenshots.json"
   ],
   "publishConfig": {
     "access": "public"

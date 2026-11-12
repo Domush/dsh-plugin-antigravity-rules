@@ -58,26 +58,6 @@ function getApprovedWorkspace(ctx, requestedCwd) {
 }
 
 
-/** Built-in heuristic domain glob mappings when frontmatter does not declare explicit globs */
-const DEFAULT_DOMAIN_GLOBS = {
-  "coding-standards": ["**/*.cs"],
-  "ui-standards": ["**/*.uxml", "**/*.uss", "**/UI/**", "**/*HUD*.cs", "**/*Presenter*.cs"],
-  "assets-standards": ["**/*.fbx", "**/*.blend", "**/*.obj", "**/Models/**", "**/Art/**", "**/Prefabs/**"],
-  "audio-standards": ["**/*.wav", "**/*.mp3", "**/*.ogg", "**/Audio/**", "**/*Audio*.cs"],
-  "datamod-standards": ["**/*.json", "**/*.yaml", "**/*.yml", "**/Data/**", "**/Catalogs/**"],
-  "economy-standards": ["**/Economy/**", "**/*Economy*.cs", "**/*Market*.cs"],
-  "galaxy-standards": ["**/Galaxy/**", "**/*Galaxy*.cs", "**/*Sector*.cs", "**/*Procedural*.cs"],
-  "gdd-standards": ["GDD.md", "docs/**"],
-  "narrative-standards": ["**/*.narrative.yaml", "**/*.quest.yaml", "**/Narrative/**", "**/*Dialogue*.cs"],
-  "netcode-standards": ["**/Netcode/**", "**/*Network*.cs", "**/*Client*.cs", "**/*Server*.cs"],
-  "systems-standards": ["**/Physics/**", "**/Systems/**", "**/*Flight*.cs", "**/*Inertia*.cs"],
-  "tactics-standards": ["**/Tactics/**", "**/AI/**", "**/*Combat*.cs", "**/*NPBehave*.cs"],
-  "testing-standards": ["**/Tests/**", "**/*Test*.cs", "**/*Tests*.cs"],
-  "tools-standards": ["**/Editor/**", "**/Tools/**", "**/*Editor*.cs"],
-  "vfx-standards": ["**/VFX/**", "**/*.shader", "**/*.shadergraph", "**/*.hlsl", "**/*VFX*.cs"],
-  "agent-governance-standards": ["AGENTS.md", ".agents/**"]
-};
-
 /** Convert a glob pattern into a RegExp */
 function globToRegex(glob) {
   const normalized = glob.replace(/\\/g, "/");
@@ -183,8 +163,6 @@ function scanRulesDirectory(dirPath, displayPrefix) {
           globs = [meta.globs];
         } else if (typeof meta.glob === "string" && meta.glob) {
           globs = [meta.glob];
-        } else if (DEFAULT_DOMAIN_GLOBS[name]) {
-          globs = [...DEFAULT_DOMAIN_GLOBS[name]];
         }
 
         const relativePath = path.join(displayPrefix, file).replace(/\\/g, "/");
@@ -425,7 +403,7 @@ export function apply(ctx, rawConfig) {
       properties: {
         name: {
           type: "string",
-          description: "Rule name or relative file path under .agents/rules (e.g. 'ui-standards', 'assets-standards', or '.agents/rules/ui-standards.md')."
+          description: "Rule name or relative file path under .agents/rules (e.g. 'coding-style', 'git-workflow', or '.agents/rules/coding-style.md')."
         },
         action: {
           type: "string",

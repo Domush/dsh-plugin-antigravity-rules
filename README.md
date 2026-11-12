@@ -22,19 +22,19 @@ Native Google Antigravity engineering rules loader and runtime enforcement engin
 ## Key Features
 
 1. **Always-On Rules Enforcement (`trigger: always_on`)**:
-   Automatically loads universal engineering invariants (e.g. `coding-standards.md`) and injects them directly into the agent's system prompt on every turn—preventing architectural drift without manual file inspection.
+   Automatically loads universal engineering invariants (e.g. `coding-style.md`) and injects them directly into the agent's system prompt on every turn—preventing architectural drift without manual file inspection.
 
 2. **Domain Rules Catalog (`trigger: model_decision`)**:
-   Catalogs all domain-specific standards (e.g., `ui-standards.md`, `assets-standards.md`, `testing-standards.md`) with their descriptions and file paths in the system prompt so the agent is continuously aware of governing domain rules.
+   Catalogs all domain-specific standards (e.g., `testing.md`, `security.md`, `api-guidelines.md`) with their descriptions and file paths in the system prompt so the agent is continuously aware of governing domain rules.
 
-3. **Automated Glob & Domain File Activation**:
-   Monitors file touch operations (`read`, `write`, `edit`). When a touched file matches a rule's explicit `globs` or standard domain patterns (e.g. `Assets/UI/**` -> `ui-standards`), the relevant rule is dynamically activated for the remainder of the session.
+3. **Automated Glob File Activation**:
+   Monitors file touch operations (`read`, `write`, `edit`). When a touched file matches a rule's explicit `globs` (e.g. `src/api/**` -> `api-guidelines`), the relevant rule is dynamically activated for the remainder of the session.
 
 4. **`antigravity_rule` Tool**:
    Provides agents and users with a dedicated tool to read, list, and toggle rules on demand:
    - `antigravity_rule(action: "list")`
-   - `antigravity_rule(name: "ui-standards")`
-   - `antigravity_rule(action: "toggle", name: "tactics-standards", enabled: false)`
+   - `antigravity_rule(name: "api-guidelines")`
+   - `antigravity_rule(action: "toggle", name: "api-guidelines", enabled: false)`
 
 5. **Web Settings UI**:
    Adds a dedicated **Rules** tab to the DeepSeek Harness Settings page featuring:
